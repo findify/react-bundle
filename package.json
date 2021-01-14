@@ -1,0 +1,31 @@
+{
+  "name": "@findiy/jetshop",
+  "version": "0.0.1",
+  "description": "Findify integration with Jetshop SPA",
+  "source": "index.js",
+  "main": "dist/findify.js",
+  "exports": "dist/findify.modern.js",
+  "module": "dist/findify.module.js",
+  "unpkg": "dist/findify.umd.js",
+  "scripts": {
+    "build": "microbundle",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/findify/jetshop.git"
+  },
+  "author": "yourfriend@findify.io",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/findify/jetshop/issues"
+  },
+  "homepage": "https://github.com/findify/jetshop#readme",
+  "peerDependencies": {
+    "react": "^17.0.1",
+    "react-router-dom": "^5.2.0"
+  },
+  "devDependencies": {
+    "microbundle": "^0.13.0"
+  }
+}
