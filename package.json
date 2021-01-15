@@ -1,6 +1,6 @@
 {
   "name": "@findify/jetshop",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Findify integration with Jetshop SPA",
   "source": "index.js",
   "main": "dist/findify.js",
