@@ -45,7 +45,11 @@ export default ({ type, config = {}, options = {}, widgetKey = randomKey() }) =>
         type,
         container.current,
         findify.config,
-        { ...config, widgetKey, disableAutoRequest: true }
+        {
+          widgetKey,
+          disableAutoRequest: type !== 'recommendation',
+          ...config,
+        }
       );
     
       findify.widgets.attach(container.current, type, widgetConfig)

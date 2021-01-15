@@ -30,7 +30,7 @@ const randomKey = () => Math.random().toString(36).substring(7);
 const waitForFindify = () => new Promise(resolve => (window.findifyCallbacks = window.findifyCallbacks || []).push(findify => resolve(findify)));
 
 const getWidgetConfig = (type, node, config, customs) => {
-  const cfg = type === 'recommendation' && config.getIn(['features', 'recommendations', '#' + node.getAttribute('id')]) || config.getIn(['features', type]);
+  const cfg = type === 'recommendation' && config.getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))]) || config.getIn(['features', type]);
   return config.withMutations(c => c.mergeDeep(cfg).mergeDeep(customs).set('node', node).set('cssSelector', `findify-${type} findify-widget-${customs.widgetKey}`).toJS());
 };
 
@@ -50,10 +50,10 @@ var index = (({
     const init = async () => {
       findify = await waitForFindify();
       findify.history = history;
-      const widgetConfig = getWidgetConfig(type, container.current, findify.config, _extends({}, _config, {
+      const widgetConfig = getWidgetConfig(type, container.current, findify.config, _extends({
         widgetKey: _widgetKey,
-        disableAutoRequest: true
-      }));
+        disableAutoRequest: type !== 'recommendation'
+      }, _config));
       findify.widgets.attach(container.current, type, widgetConfig);
       const widget = findify.widgets.get(_widgetKey);
       const meta = widget.config.get('meta') && widget.config.get('meta').toJS() || {};

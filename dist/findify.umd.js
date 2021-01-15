@@ -40,7 +40,7 @@
   };
 
   var getWidgetConfig = function getWidgetConfig(type, node, config, customs) {
-    var cfg = type === 'recommendation' && config.getIn(['features', 'recommendations', '#' + node.getAttribute('id')]) || config.getIn(['features', type]);
+    var cfg = type === 'recommendation' && config.getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))]) || config.getIn(['features', type]);
     return config.withMutations(function (c) {
       return c.mergeDeep(cfg).mergeDeep(customs).set('node', node).set('cssSelector', "findify-" + type + " findify-widget-" + customs.widgetKey).toJS();
     });
@@ -70,10 +70,10 @@
           return Promise.resolve(waitForFindify()).then(function (_waitForFindify) {
             findify = _waitForFindify;
             findify.history = history;
-            var widgetConfig = getWidgetConfig(type, container.current, findify.config, _extends({}, config, {
+            var widgetConfig = getWidgetConfig(type, container.current, findify.config, _extends({
               widgetKey: widgetKey,
-              disableAutoRequest: true
-            }));
+              disableAutoRequest: type !== 'recommendation'
+            }, config));
             findify.widgets.attach(container.current, type, widgetConfig);
             var widget = findify.widgets.get(widgetKey);
             var meta = widget.config.get('meta') && widget.config.get('meta').toJS() || {};
