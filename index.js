@@ -16,7 +16,7 @@ const waitForFindify = () => new Promise(resolve =>
 
 const getWidgetConfig = (type, node, config, customs) => {
   const cfg = type === 'recommendation'
-    && config.getIn(['features', 'recommendations', '#' + node.getAttribute('id')])
+    && config.getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))])
     || config.getIn(['features', type]);
 
   return config.withMutations(c =>
