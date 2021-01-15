@@ -37,7 +37,7 @@ export default ({ type, config = {}, options = {}, widgetKey = randomKey() }) =>
     if (!container.current) return;
     let findify = void 0;
     
-    (async () => {
+    const init = async () => {
       findify = await waitForFindify();
       findify.history = history;
     
@@ -57,12 +57,12 @@ export default ({ type, config = {}, options = {}, widgetKey = randomKey() }) =>
 
       if (['search', 'smart-collection'].includes(type)) {
         widget.agent.applyState(findify.utils.getQuery())
-      }
-      
-    })()
+      }  
+    }
+
+    init();
 
     return () => {
-      if (!findify) return (shouldRender = false)
       findify.widgets.detach(widgetKey)
     }
   }, [container]);

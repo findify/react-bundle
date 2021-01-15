@@ -1,2 +1,76 @@
-import{useRef as e,useState as t,useEffect as n}from"react";import{useHistory as r}from"react-router-dom";function i(){return(i=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(e[r]=n[r])}return e}).apply(this,arguments)}const o={autocomplete:"change:suggestions",recommendation:"change:items",search:"change:items"},a=()=>Math.random().toString(36).substring(7);export default({type:s,config:c={},options:g={},widgetKey:u=a()})=>{const d=e(null),[f,l]=t(!1),m=r();return n(()=>{if(!d.current)return;let e;return(async()=>{e=await new Promise(e=>(window.findifyCallbacks=window.findifyCallbacks||[]).push(t=>e(t))),e.history=m;const t=((e,t,n,r)=>{const i="recommendation"===e&&n.getIn(["features","recommendations","#"+t.getAttribute("id")])||n.getIn(["features",e]);return n.withMutations(n=>n.mergeDeep(i).mergeDeep(r).set("node",t).set("cssSelector",`findify-${e} findify-widget-${r.widgetKey}`).toJS())})(s,d.current,e.config,i({},c,{widgetKey:u,disableAutoRequest:!0}));e.widgets.attach(d.current,s,t);const n=e.widgets.get(u),r=n.config.get("meta")&&n.config.get("meta").toJS()||{};n.agent.defaults(i({},r,g)).once(o[s],()=>l(!0)),["search","smart-collection"].includes(s)&&n.agent.applyState(e.utils.getQuery())})(),()=>{if(!e)return shouldRender=!1;e.widgets.detach(u)}},[d]),[d,f]};
+import { useRef, useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+const eventBindings = {
+  autocomplete: 'change:suggestions',
+  recommendation: 'change:items',
+  search: 'change:items'
+};
+
+const randomKey = () => Math.random().toString(36).substring(7);
+
+const waitForFindify = () => new Promise(resolve => (window.findifyCallbacks = window.findifyCallbacks || []).push(findify => resolve(findify)));
+
+const getWidgetConfig = (type, node, config, customs) => {
+  const cfg = type === 'recommendation' && config.getIn(['features', 'recommendations', '#' + node.getAttribute('id')]) || config.getIn(['features', type]);
+  return config.withMutations(c => c.mergeDeep(cfg).mergeDeep(customs).set('node', node).set('cssSelector', `findify-${type} findify-widget-${customs.widgetKey}`).toJS());
+};
+
+var index = (({
+  type,
+  config: _config = {},
+  options: _options = {},
+  widgetKey: _widgetKey = randomKey()
+}) => {
+  const container = useRef(null);
+  const [ready, setReady] = useState(false);
+  const history = useHistory();
+  useEffect(() => {
+    if (!container.current) return;
+    let findify = void 0;
+
+    const init = async () => {
+      findify = await waitForFindify();
+      findify.history = history;
+      const widgetConfig = getWidgetConfig(type, container.current, findify.config, _extends({}, _config, {
+        widgetKey: _widgetKey,
+        disableAutoRequest: true
+      }));
+      findify.widgets.attach(container.current, type, widgetConfig);
+      const widget = findify.widgets.get(_widgetKey);
+      const meta = widget.config.get('meta') && widget.config.get('meta').toJS() || {};
+      widget.agent.defaults(_extends({}, meta, _options)).once(eventBindings[type], () => setReady(true));
+
+      if (['search', 'smart-collection'].includes(type)) {
+        widget.agent.applyState(findify.utils.getQuery());
+      }
+    };
+
+    init();
+    return () => {
+      findify.widgets.detach(_widgetKey);
+    };
+  }, [container]);
+  return [container, ready];
+});
+
+export default index;
 //# sourceMappingURL=findify.modern.js.map

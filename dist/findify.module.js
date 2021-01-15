@@ -1,2 +1,100 @@
-import{useRef as e,useState as t,useEffect as n}from"react";import{useHistory as r}from"react-router-dom";function i(){return(i=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(e[r]=n[r])}return e}).apply(this,arguments)}var o={autocomplete:"change:suggestions",recommendation:"change:items",search:"change:items"};export default function(a){var c=a.type,u=a.config,s=void 0===u?{}:u,f=a.options,d=void 0===f?{}:f,g=a.widgetKey,m=void 0===g?Math.random().toString(36).substring(7):g,l=e(null),h=t(!1),p=h[0],y=h[1],v=r();return n(function(){if(l.current){var e=void 0;try{return Promise.resolve(new Promise(function(e){return(window.findifyCallbacks=window.findifyCallbacks||[]).push(function(t){return e(t)})})).then(function(t){(e=t).history=v;var n=function(e,t,n,r){var i="recommendation"===e&&n.getIn(["features","recommendations","#"+t.getAttribute("id")])||n.getIn(["features",e]);return n.withMutations(function(n){return n.mergeDeep(i).mergeDeep(r).set("node",t).set("cssSelector","findify-"+e+" findify-widget-"+r.widgetKey).toJS()})}(c,l.current,e.config,i({},s,{widgetKey:m,disableAutoRequest:!0}));e.widgets.attach(l.current,c,n);var r=e.widgets.get(m),a=r.config.get("meta")&&r.config.get("meta").toJS()||{};r.agent.defaults(i({},a,d)).once(o[c],function(){return y(!0)}),["search","smart-collection"].includes(c)&&r.agent.applyState(e.utils.getQuery())})}catch(e){Promise.reject(e)}return function(){if(!e)return shouldRender=!1;e.widgets.detach(m)}}},[l]),[l,p]}
+import { useRef, useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+var eventBindings = {
+  autocomplete: 'change:suggestions',
+  recommendation: 'change:items',
+  search: 'change:items'
+};
+
+var randomKey = function randomKey() {
+  return Math.random().toString(36).substring(7);
+};
+
+var waitForFindify = function waitForFindify() {
+  return new Promise(function (resolve) {
+    return (window.findifyCallbacks = window.findifyCallbacks || []).push(function (findify) {
+      return resolve(findify);
+    });
+  });
+};
+
+var getWidgetConfig = function getWidgetConfig(type, node, config, customs) {
+  var cfg = type === 'recommendation' && config.getIn(['features', 'recommendations', '#' + node.getAttribute('id')]) || config.getIn(['features', type]);
+  return config.withMutations(function (c) {
+    return c.mergeDeep(cfg).mergeDeep(customs).set('node', node).set('cssSelector', "findify-" + type + " findify-widget-" + customs.widgetKey).toJS();
+  });
+};
+
+var index = (function (_ref) {
+  var type = _ref.type,
+      _ref$config = _ref.config,
+      config = _ref$config === void 0 ? {} : _ref$config,
+      _ref$options = _ref.options,
+      options = _ref$options === void 0 ? {} : _ref$options,
+      _ref$widgetKey = _ref.widgetKey,
+      widgetKey = _ref$widgetKey === void 0 ? randomKey() : _ref$widgetKey;
+  var container = useRef(null);
+
+  var _useState = useState(false),
+      ready = _useState[0],
+      setReady = _useState[1];
+
+  var history = useHistory();
+  useEffect(function () {
+    if (!container.current) return;
+    var findify = void 0;
+
+    var init = function init() {
+      try {
+        return Promise.resolve(waitForFindify()).then(function (_waitForFindify) {
+          findify = _waitForFindify;
+          findify.history = history;
+          var widgetConfig = getWidgetConfig(type, container.current, findify.config, _extends({}, config, {
+            widgetKey: widgetKey,
+            disableAutoRequest: true
+          }));
+          findify.widgets.attach(container.current, type, widgetConfig);
+          var widget = findify.widgets.get(widgetKey);
+          var meta = widget.config.get('meta') && widget.config.get('meta').toJS() || {};
+          widget.agent.defaults(_extends({}, meta, options)).once(eventBindings[type], function () {
+            return setReady(true);
+          });
+
+          if (['search', 'smart-collection'].includes(type)) {
+            widget.agent.applyState(findify.utils.getQuery());
+          }
+        });
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    };
+
+    init();
+    return function () {
+      findify.widgets.detach(widgetKey);
+    };
+  }, [container]);
+  return [container, ready];
+});
+
+export default index;
 //# sourceMappingURL=findify.module.js.map
