@@ -38,10 +38,8 @@ var waitForFindify = function waitForFindify() {
 };
 
 var getWidgetConfig = function getWidgetConfig(type, node, config, customs) {
-  var cfg = type === 'recommendation' && config.getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))]) || config.getIn(['features', type]);
-  return config.withMutations(function (c) {
-    return c.mergeDeep(cfg).mergeDeep(customs).set('node', node).set('cssSelector', "findify-" + type + " findify-widget-" + customs.widgetKey).toJS();
-  });
+  if (type !== 'recommendation') return customs;
+  return config.getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))]).mergeDeep(customs);
 };
 
 var index = (function (_ref) {

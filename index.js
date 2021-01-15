@@ -15,17 +15,10 @@ const waitForFindify = () => new Promise(resolve =>
 );
 
 const getWidgetConfig = (type, node, config, customs) => {
-  const cfg = type === 'recommendation'
-    && config.getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))])
-    || config.getIn(['features', type]);
-
-  return config.withMutations(c =>
-      c.mergeDeep(cfg)
-      .mergeDeep(customs)
-      .set('node', node)
-      .set('cssSelector', `findify-${type} findify-widget-${customs.widgetKey}`)
-      .toJS()
-    );
+  if (type !== 'recommendation') return customs;
+  return config
+    .getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))])
+    .mergeDeep(customs);
 };
 
 export default ({ type, config = {}, options = {}, widgetKey = randomKey() }) => {
