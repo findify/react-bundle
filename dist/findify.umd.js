@@ -41,7 +41,12 @@
   };
 
   var getWidgetConfig = function getWidgetConfig(type, node, config, customs) {
-    if (type !== 'recommendation') return config.getIn(['features', type]).mergeDeep(customs);
+    if (type !== 'recommendation') {
+      var _type = type === 'smart-collection' ? 'search' : type;
+
+      return config.getIn(['features', _type]).mergeDeep(customs);
+    }
+
     return config.getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))]).mergeDeep(customs);
   };
 
