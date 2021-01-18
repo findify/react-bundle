@@ -22,7 +22,8 @@ function _extends() {
 var eventBindings = {
   autocomplete: 'change:suggestions',
   recommendation: 'change:items',
-  search: 'change:items'
+  search: 'change:items',
+  'smart-collection': 'change:items'
 };
 
 var randomKey = function randomKey() {
@@ -56,6 +57,10 @@ var index = (function (_ref) {
       ready = _useState[0],
       setReady = _useState[1];
 
+  var _useState2 = react.useState(false),
+      hasError = _useState2[0],
+      setError = _useState2[1];
+
   var history = reactRouterDom.useHistory();
   react.useEffect(function () {
     if (!container.current) return;
@@ -68,13 +73,28 @@ var index = (function (_ref) {
           findify.history = history;
           var widgetConfig = getWidgetConfig(type, container.current, findify.config, _extends({
             widgetKey: widgetKey,
-            disableAutoRequest: type !== 'recommendation'
+            disableAutoRequest: true
           }, config));
           findify.widgets.attach(container.current, type, widgetConfig);
           var widget = findify.widgets.get(widgetKey);
           var meta = widget.config.get('meta') && widget.config.get('meta').toJS() || {};
-          widget.agent.defaults(_extends({}, meta, options)).once(eventBindings[type], function () {
-            return setReady(true);
+
+          var defaults = _extends({}, meta, options);
+
+          if (type === 'recommendation') {
+            defaults.slot = config.slot;
+            defaults.type = config.type || widgetConfig.get('type');
+          }
+
+          if (type === 'smart-collection') {
+            defaults.slot = config.slot || findify.utils.collectionPath();
+          }
+
+          widget.agent.defaults(defaults).once('error', function () {
+            return setError(true);
+          }).once(eventBindings[type], function (items) {
+            if (!items.length) setError(true);
+            setReady(true);
           });
 
           if (['search', 'smart-collection'].includes(type)) {
@@ -91,8 +111,9 @@ var index = (function (_ref) {
       findify.widgets.detach(widgetKey);
     };
   }, [container]);
-  return [container, ready];
+  return [container, ready, hasError];
 });
 
-module.exports = index;
+exports.default = index;
+exports.waitForFindify = waitForFindify;
 //# sourceMappingURL=findify.js.map

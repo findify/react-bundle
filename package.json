@@ -1,7 +1,7 @@
 {
-  "name": "@findify/jetshop",
-  "version": "0.0.6",
-  "description": "Findify integration with Jetshop SPA",
+  "name": "@findify/react-bundle",
+  "version": "0.0.1",
+  "description": "React Hook that allows you to simply integrate Findify with React app",
   "source": "index.js",
   "main": "dist/findify.js",
   "exports": "dist/findify.modern.js",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/findify/jetshop.git"
+    "url": "git+https://github.com/findify/react-bundle.git"
   },
   "author": "yourfriend@findify.io",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/findify/jetshop/issues"
+    "url": "https://github.com/findify/react-bundle/issues"
   },
-  "homepage": "https://github.com/findify/jetshop#readme",
+  "homepage": "https://github.com/findify/react-bundle#readme",
   "peerDependencies": {
     "react": "^17.0.1",
     "react-router-dom": "^5.2.0"

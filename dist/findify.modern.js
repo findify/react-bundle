@@ -22,7 +22,8 @@ function _extends() {
 const eventBindings = {
   autocomplete: 'change:suggestions',
   recommendation: 'change:items',
-  search: 'change:items'
+  search: 'change:items',
+  'smart-collection': 'change:items'
 };
 
 const randomKey = () => Math.random().toString(36).substring(7);
@@ -42,6 +43,7 @@ var index = (({
 }) => {
   const container = useRef(null);
   const [ready, setReady] = useState(false);
+  const [hasError, setError] = useState(false);
   const history = useHistory();
   useEffect(() => {
     if (!container.current) return;
@@ -52,12 +54,27 @@ var index = (({
       findify.history = history;
       const widgetConfig = getWidgetConfig(type, container.current, findify.config, _extends({
         widgetKey: _widgetKey,
-        disableAutoRequest: type !== 'recommendation'
+        disableAutoRequest: true
       }, _config));
       findify.widgets.attach(container.current, type, widgetConfig);
       const widget = findify.widgets.get(_widgetKey);
       const meta = widget.config.get('meta') && widget.config.get('meta').toJS() || {};
-      widget.agent.defaults(_extends({}, meta, _options)).once(eventBindings[type], () => setReady(true));
+
+      const defaults = _extends({}, meta, _options);
+
+      if (type === 'recommendation') {
+        defaults.slot = _config.slot;
+        defaults.type = _config.type || widgetConfig.get('type');
+      }
+
+      if (type === 'smart-collection') {
+        defaults.slot = _config.slot || findify.utils.collectionPath();
+      }
+
+      widget.agent.defaults(defaults).once('error', () => setError(true)).once(eventBindings[type], items => {
+        if (!items.length) setError(true);
+        setReady(true);
+      });
 
       if (['search', 'smart-collection'].includes(type)) {
         widget.agent.applyState(findify.utils.getQuery());
@@ -69,8 +86,9 @@ var index = (({
       findify.widgets.detach(_widgetKey);
     };
   }, [container]);
-  return [container, ready];
+  return [container, ready, hasError];
 });
 
 export default index;
+export { waitForFindify };
 //# sourceMappingURL=findify.modern.js.map
