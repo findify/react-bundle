@@ -31,7 +31,7 @@ const randomKey = () => Math.random().toString(36).substring(7);
 const waitForFindify = () => new Promise(resolve => (window.findifyCallbacks = window.findifyCallbacks || []).push(findify => resolve(findify)));
 
 const getWidgetConfig = (type, node, config, customs) => {
-  if (type !== 'recommendation') return customs;
+  if (type !== 'recommendation') return config.getIn(['features', type]).mergeDeep(customs);
   return config.getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))]).mergeDeep(customs);
 };
 
