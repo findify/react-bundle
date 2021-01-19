@@ -31,12 +31,7 @@ const randomKey = () => Math.random().toString(36).substring(7);
 const waitForFindify = () => new Promise(resolve => (window.findifyCallbacks = window.findifyCallbacks || []).push(findify => resolve(findify)));
 
 const getWidgetConfig = (type, node, config, customs) => {
-  if (type !== 'recommendation') {
-    const _type = type === 'smart-collection' ? 'search' : type;
-
-    return config.getIn(['features', _type]).mergeDeep(customs);
-  }
-
+  if (type !== 'recommendation') return customs;
   return config.getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))]).mergeDeep(customs);
 };
 
@@ -61,7 +56,7 @@ var index = (({
         widgetKey: _widgetKey,
         disableAutoRequest: true
       }, _config));
-      findify.widgets.attach(container.current, type, widgetConfig);
+      findify.widgets.attach(container.current, type === 'smart-collection' ? 'search' : type, widgetConfig);
       const widget = findify.widgets.get(_widgetKey);
       const meta = widget.config.get('meta') && widget.config.get('meta').toJS() || {};
 

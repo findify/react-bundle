@@ -39,12 +39,7 @@ var waitForFindify = function waitForFindify() {
 };
 
 var getWidgetConfig = function getWidgetConfig(type, node, config, customs) {
-  if (type !== 'recommendation') {
-    var _type = type === 'smart-collection' ? 'search' : type;
-
-    return config.getIn(['features', _type]).mergeDeep(customs);
-  }
-
+  if (type !== 'recommendation') return customs;
   return config.getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))]).mergeDeep(customs);
 };
 
@@ -80,7 +75,7 @@ var index = (function (_ref) {
             widgetKey: widgetKey,
             disableAutoRequest: true
           }, config));
-          findify.widgets.attach(container.current, type, widgetConfig);
+          findify.widgets.attach(container.current, type === 'smart-collection' ? 'search' : type, widgetConfig);
           var widget = findify.widgets.get(widgetKey);
           var meta = widget.config.get('meta') && widget.config.get('meta').toJS() || {};
 

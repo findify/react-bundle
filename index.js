@@ -16,10 +16,7 @@ export const waitForFindify = () => new Promise(resolve =>
 );
 
 const getWidgetConfig = (type, node, config, customs) => {
-  if (type !== 'recommendation') {
-    const _type = type === 'smart-collection' ? 'search' : type;
-    return config.getIn(['features', _type]).mergeDeep(customs);
-  }
+  if (type !== 'recommendation') return customs;
   return config
     .getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))])
     .mergeDeep(customs);
@@ -50,7 +47,11 @@ export default ({ type, config = {}, options = {}, widgetKey = randomKey() }) =>
         }
       );
     
-      findify.widgets.attach(container.current, type, widgetConfig)
+      findify.widgets.attach(
+        container.current,
+        type === 'smart-collection' ? 'search' : type,
+        widgetConfig
+      )
 
       const widget = findify.widgets.get(widgetKey)
 
