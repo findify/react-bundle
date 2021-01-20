@@ -44,6 +44,7 @@ Third element in array is error state `true` or `false`, it shows you if any err
 | Prop | Required | Default value | Description |
 |---|---|---|---|
 | `type<String>` | *yes* | `''`| Type of widget. Could be `search`, `recommendation`, `autocomplete`, `smart-collection` |
+| `history<History>` | *no* | `undefined`| Custom history instance, this prop is required if you want to have history navigation |
 | `widgetKey<String>` | *no* | `random`| Widget unique Id. You can provide this parameter if you would like to use Findify API in the future |
 | `config<Object>` | *no* | | Custom widget configuration that will be merged with default one. You should provide `slot` in this object in case you are creating recommendation |
 | `options<Object>` | *no* | | Additional request options |
@@ -59,6 +60,7 @@ Go to `/components/SearchPage/SearchPage.js`
 ```javascript
 //...
 import useFindify from '@findify/react-bundle';
+import { useHistory } from 'react-router;
 
 export const Container = styled(MaxWidth)`
   padding: 0 0.75rem;
@@ -67,8 +69,9 @@ export const Container = styled(MaxWidth)`
 //...
 const SearchPage = routeProps => {
   const track = useTracker();
+  const history = useHistory();
   const { pathname, search } = routeProps.location;
-  const [container, isReady] = useFindify({ type: 'search' });
+  const [container, isReady] = useFindify({ type: 'search', history });
 
   useEffect(() => {
     track(trackPageEvent({ pathname: `${pathname}${search}` }));

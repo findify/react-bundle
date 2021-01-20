@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
+import { useHistory } from "react-router-dom";
 
 const eventBindings = {
   autocomplete: 'change:suggestions',
@@ -8,6 +9,7 @@ const eventBindings = {
 }
 
 const randomKey = () => Math.random().toString(36).substring(7)
+
 
 export const waitForFindify = () => new Promise(resolve =>
   (window.findifyCallbacks = window.findifyCallbacks || []).push(findify => resolve(findify))
@@ -20,10 +22,11 @@ const getWidgetConfig = (type, node, config, customs) => {
     .mergeDeep(customs);
 };
 
-export default ({ type, config = {}, history, options = {}, widgetKey = randomKey() }) => {
+export default ({ type, config = {}, options = {}, widgetKey = randomKey() }) => {
   const container = useRef(null);
   const [ready, setReady] = useState(false);
   const [hasError, setError] = useState(false);
+  const history = useHistory();
 
   useEffect(() => {
     if (!container.current) return;
@@ -31,8 +34,8 @@ export default ({ type, config = {}, history, options = {}, widgetKey = randomKe
     
     const init = async () => {
       findify = await waitForFindify();
-      if (history) findify.utils.history = history;
-
+      findify.utils.setHistory(history);
+    
       const widgetConfig = getWidgetConfig(
         type,
         container.current,
