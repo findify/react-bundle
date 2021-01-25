@@ -1,5 +1,5 @@
 # @findify/react-bundle
-React hook that allows you to integrate Findify search and autocomplete with Jetshop SPA.
+React hook that allows you to integrate Findify search and autocomplete with any React SPA app.
 
 ## Installation
 
@@ -55,6 +55,18 @@ Third element in array is error state `true` or `false`, it shows you if any err
 ---
 ## Jetshop minimal example
 
+> To prevent unnecessary scroll add 'FindifyUpdate' in `ignoreForRouteTypes` array in `/src/components/Shop.js`
+```javascript
+<ScrollRestorationHandler
+  ignoreForRouteTypes={[
+    'sortOrderChange',
+    'filterChange',
+    'paginationChange',
+    'FindifyUpdate'
+  ]}
+/>
+```
+
 ### Search
 Go to `/components/SearchPage/SearchPage.js` 
 ```javascript
@@ -90,6 +102,8 @@ Go to `/components/Layout/Header/SearchBar.js`
 ```javascript
 //...
 import useFindify from '@findify/react-bundle';
+import { useHistory } from 'react-router;
+
 
 //...
 const StyledSearchField = styled('div')`
@@ -109,7 +123,8 @@ const StyledSearchField = styled('div')`
 `;
 
 const SearchBar = ({ searchOpen, setSearchOpen }) => {
-  const [container] = useFindify({ type: 'autocomplete' });
+  const history = useHistory();
+  const [container] = useFindify({ type: 'autocomplete', history });
   return (
     <PoseGroup flipMove={true}>
       {searchOpen && (
