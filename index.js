@@ -69,7 +69,7 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
         defaults.slot = config.slot || findify.utils.collectionPath();
       }
 
-      const callback = ([items]) => window.requestAnimationFrame(() => {
+      const callback = (items) => window.requestAnimationFrame(() => {
         widget.agent.off(callback)
         if (!items.size) setError(true)
         setReady(true);
