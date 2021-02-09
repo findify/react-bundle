@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from 'react';
-import { useHistory } from "react-router-dom";
 
 const eventBindings = {
   autocomplete: 'change:suggestions',
@@ -22,11 +21,10 @@ const getWidgetConfig = (type, node, config, customs) => {
     .mergeDeep(customs);
 };
 
-export default ({ type, config = {}, options = {}, widgetKey = randomKey() }) => {
+export default ({ type, config = {}, options = {}, history, widgetKey = randomKey() }) => {
   const container = useRef(null);
   const [ready, setReady] = useState(false);
   const [hasError, setError] = useState(false);
-  const history = useHistory();
 
   useEffect(() => {
     if (!container.current) return;
@@ -34,7 +32,7 @@ export default ({ type, config = {}, options = {}, widgetKey = randomKey() }) =>
     
     const init = async () => {
       findify = await waitForFindify();
-      findify.utils.setHistory(history);
+      if (history) findify.utils.history = history;
     
       const widgetConfig = getWidgetConfig(
         type,
@@ -71,13 +69,16 @@ export default ({ type, config = {}, options = {}, widgetKey = randomKey() }) =>
         defaults.slot = config.slot || findify.utils.collectionPath();
       }
 
+      const callback = ([items]) => window.requestAnimationFrame(() => {
+        widget.agent.off(callback)
+        if (!items.size) setError(true)
+        setReady(true);
+      })
+
       widget.agent
         .defaults(defaults)
-        .once('error', () => setError(true))
-        .once(eventBindings[type], (items) => {
-          if (!items.length) setError(true)
-          setReady(true);
-        })
+        .on('error', () => setError(true))
+        .on(eventBindings[type], callback)
 
       if (['search', 'smart-collection'].includes(type)) {
         widget.agent.applyState(findify.utils.getQuery())
@@ -87,6 +88,7 @@ export default ({ type, config = {}, options = {}, widgetKey = randomKey() }) =>
     init();
 
     return () => {
+      console.log('detach', widgetKey)
       findify.widgets.detach(widgetKey)
     }
   }, [container]);
