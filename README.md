@@ -1,19 +1,19 @@
 # @findify/react-bundle
-React hook that allows you to integrate Findify search and autocomplete with any React SPA app.
-
+React hook that allows you to integrate Findify Search/Autocomplete/Smart Collections/Recommendations with any React SPA App.
+​
 ## Installation
-
+​
 #### Install dependency
 ```bash
 yarn add @findify/react-bundle
 ```
-
+​
 #### Add script to `index.html`
 ```html
 <script type="text/javascript" src="https://assets.findify.io/%REACT_APP_FINDIFY_STORE%.min.js"></script>
-
+​
 ```
-
+​
 #### Add variable in `.env`
 ```
 REACT_APP_FINDIFY_STORE="YOUR_STORE_NAME"
@@ -23,7 +23,7 @@ REACT_APP_FINDIFY_STORE="YOUR_STORE_NAME"
 ```javascript
 import React from 'react'
 import useFindify from '@findify/react-bundle'
-
+​
 export default () => {
   const [container, isReady, hasError] = useFindify({ type: 'search' })
   return (
@@ -31,31 +31,30 @@ export default () => {
   )
 }
 ```
-
-First element in array is `React.createRef()` that you should add as `ref` to the element where widget will appear.
-
-Second element is widget ready state it could be `true` or `false`. You can use this state to show and hide placeholder while findify is rendering.
-
-Third element in array is error state `true` or `false`, it shows you if any error happened
- or no items was returned from the response.
-
+​
+The first element of an array is a `React.createRef()` that you should add as `ref` to the element where widget will be rendered.
+​
+The second element is a widget ready state: `true` or `false`. You can use this state to show and hide placeholders while findify is still rendering.
+​
+The third element of an array is an error state: `true` or `false`. It will return `true` if there are errors or if there are no items returned in response.
+​
 ### Props
-
+​
 | Prop | Required | Default value | Description |
 |---|---|---|---|
-| `type<String>` | *yes* | `''`| Type of widget. Could be `search`, `recommendation`, `autocomplete`, `smart-collection` |
-| `history<History>` | *no* | `undefined`| Custom history instance, this prop is required if you want to have history navigation |
-| `widgetKey<String>` | *no* | `random`| Widget unique Id. You can provide this parameter if you would like to use Findify API in the future |
-| `config<Object>` | *no* | | Custom widget configuration that will be merged with default one. You should provide `slot` in this object in case you are creating recommendation |
+| `type<String>` | *yes* | `''`| Type of widget. It could be `search`, `recommendation`, `autocomplete`, `smart-collection`. |
+| `history<History>` | *no* | `undefined`| Custom history instance. This prop is required if you want to have a history navigation. |
+| `widgetKey<String>` | *no* | `random`| Widget unique Id. You can provide this parameter if you would like to use Findify API in the future. |
+| `config<Object>` | *no* | | Custom widget configuration that will be merged with the default one. When it comes to creating Recommendation widgets, you would need to provide `slot` prop to the `config` object. |
 | `options<Object>` | *no* | | Additional request options |
-
-> For more information about Findify API and request options please visit [https://developers.findify.io/](https://developers.findify.io/)
-
-
+​
+> For more information about Findify API and request options please visit [https://developers.findify.io/docs/merchant-js-api](https://developers.findify.io/docs/merchant-js-api)
+​
+​
 ---
-## Jetshop minimal example
-
-> To prevent unnecessary scroll add 'FindifyUpdate' in `ignoreForRouteTypes` array in `/src/components/Shop.js`
+## Simple Jetshop example
+​
+> To prevent unnecessary scroll add 'FindifyUpdate' to the `ignoreForRouteTypes` array in `/src/components/Shop.js`
 ```javascript
 <ScrollRestorationHandler
   ignoreForRouteTypes={[
@@ -66,29 +65,29 @@ Third element in array is error state `true` or `false`, it shows you if any err
   ]}
 />
 ```
-
+​
 ### Search
 Go to `/components/SearchPage/SearchPage.js` 
 ```javascript
 //...
 import useFindify from '@findify/react-bundle';
 import { useHistory } from 'react-router;
-
+​
 export const Container = styled(MaxWidth)`
   padding: 0 0.75rem;
 `;
-
+​
 //...
 const SearchPage = routeProps => {
   const track = useTracker();
   const history = useHistory();
   const { pathname, search } = routeProps.location;
   const [container, isReady] = useFindify({ type: 'search', history });
-
+​
   useEffect(() => {
     track(trackPageEvent({ pathname: `${pathname}${search}` }));
   }, [track, pathname, search]);
-
+​
   return (
     <Container>
       <div ref={container} />
@@ -96,15 +95,15 @@ const SearchPage = routeProps => {
   );
 };
 ```
-
+​
 ### Autocomplete
 Go to `/components/Layout/Header/SearchBar.js`
 ```javascript
 //...
 import useFindify from '@findify/react-bundle';
 import { useHistory } from 'react-router;
-
-
+​
+​
 //...
 const StyledSearchField = styled('div')`
   & {
@@ -121,7 +120,7 @@ const StyledSearchField = styled('div')`
     }
   }
 `;
-
+​
 const SearchBar = ({ searchOpen, setSearchOpen }) => {
   const history = useHistory();
   const [container] = useFindify({ type: 'autocomplete', history });
@@ -140,19 +139,19 @@ const SearchBar = ({ searchOpen, setSearchOpen }) => {
   )
 };
 ```
-
+​
 ### Recommendation
 Go to `/components/StartPage/StatPage.js`
 ```javascript
 //...
 import useFindify from '@findify/react-bundle';
-
+​
 //...
 const StartPage = ({ location: { pathname, key }, startPageId }) => {
   const [container, isReady, hasError] = useFindify({
     type: 'recommendation',
     config: {
-      slot: 'home-findify-rec-2', // Slot is required for recommendations
+      slot: 'home-findify-rec-2', // Slot is required for recommendation widgets
     }
   });
   return (
@@ -163,19 +162,19 @@ const StartPage = ({ location: { pathname, key }, startPageId }) => {
           { !isReady && !hasError && 'Widget loading...'}
           // ...
 ```
-
+​
 ### Smart Collection
 Go to `/components/StartPage/StatPage.js`
 ```javascript
 //...
 import useFindify from '@findify/react-bundle';
-
+​
 //...
-
+​
 const CategoryPage = props => {
   // ...
   const [container, isReady, hasError] = useFindify({ type: 'smart-collection' });
-
+​
   if (!hasError) {
     return (
       <Container>
@@ -192,5 +191,4 @@ const CategoryPage = props => {
 };
   //...
 ```
-In Smart Collection example we are using fallback to initial component' logic to prevent empty page rendering if current category is not imported as collection in Findify.
-        
+For Smart Collections, Findify is introducing fallback measurements by rendering the default collections, in case if the current Smart Collection is not setup in Findify. This is to prevent blank collection pages.
