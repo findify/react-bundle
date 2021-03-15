@@ -220,7 +220,7 @@ Should be sent after product has been added to the cart and contain the whole ca
     ]
  });
 ```
-### Update cart event
+### Purchase event
 Should be sent when user purchases products
 ```javascript
  const { analytics } = await waitForFindify();
