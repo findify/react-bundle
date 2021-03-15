@@ -195,68 +195,65 @@ For Smart Collections, Findify is introducing fallback measurements by rendering
 
 
 ## Analytics
-To access findify' analytics instance from anywhere in you app use:
+To access Findify's analytics instance from anywhere in your app you can use the following example:
 ```javascript
 import { waitForFindify } from '@findify/react-bundle';
 
 async () => {
-  const { analytics } = waitForFindify();
-  analytics.sendEvent('event', { options })
+  const { analytics } = await waitForFindify();
+  analytics.sendEvent('event', { ...options })
 }
 ``` 
+
 ### Update cart event
-Should be sent after product has been added to the cart
+Should be sent after product has been added to the cart and contain the whole cat content
 ```javascript
- waitForFindify().then(({ analytics }) =>
-  analytics.sendEvent('update-cart', {
-    "line_items": [ // Array of products
+ const { analytics } = await waitForFindify();
+ analytics.sendEvent('update-cart', {
+    line_items: [ // Array of products
       {
-        "item_id": "PRODUCT_ID_1",
-        "quantity": "1",
-        "unit_price": "1",
-        "variant_item_id": "VARIANT_ID_1"
+        item_id: "PRODUCT_ID_1",
+        quantity: 1,
+        unit_price: 22.35,
+        variant_item_id: "VARIANT_ID_1"
       }
     ]
-  })
- )
+ });
 ```
 ### Update cart event
-Should be sent when user purchase products in cart
+Should be sent when user purchases products
 ```javascript
- waitForFindify().then(({ analytics }) =>
-  analytics.sendEvent('purchase', {
-    "currency": "EUR",
-    "line_items": [// Array of products
+ const { analytics } = await waitForFindify();
+ analytics.sendEvent('purchase', {
+    currency: "EUR",
+    line_items: [// Array of products
       {
-        "item_id": "PRODUCT_ID_1",
-        "quantity": "1",
-        "unit_price": "269",
-        "variant_item_id":
-        "VARIANT_ID_1"
+        item_id: "PRODUCT_ID_1",
+        quantity: 1,
+        unit_price: 288.28,
+        variant_item_id: "VARIANT_ID_1"
       },
     ],
-    "order_id": "ORDER_ID",
-    "revenue": "288"
-  })
- )
+    order_id: "ORDER_ID",
+    revenue: 288.28
+ });
 ```
 ### View page event
-Should be sent every time user lands to the product page
+Should be sent every time user lands on the product page
 ```javascript
- waitForFindify().then(({ analytics }) =>
-  analytics.sendEvent('view-page', {
-    "item_id": "PRODUCT_ID",
-    "variant_item_id": "PRODUCT_VARIANT_ID"
-  })
- )
+ const { analytics } = await waitForFindify();
+ analytics.sendEvent('view-page', {
+  item_id: "PRODUCT_ID",
+  variant_item_id: "PRODUCT_VARIANT_ID"
+ })
 ```
 ### Product click event
-In case you are using your own History instance, you should update `components/Cards/Product/view.tsx` and change `onClick` event for product card.
+In case you are using your own History instance, you should update `components/Cards/Product/view.tsx` and change `onClick` event for the product card (this is done via DevTools Extension as a customization to our platfom):
 ```javascript
 const ProductCardView ({ item }) => {
   const onClick = useCallback((e) => {
     e.preventDefault();
-    // By calling this method all necessary analytics data will be send to Findify
+    // Calling this method will ensure that all analytics events will be sent to Findify properly
     item.sendAnalytics();
     findify.utils.history.push(item.get('product_url'))
   }, []);
