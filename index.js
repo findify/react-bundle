@@ -29,9 +29,12 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
   useEffect(() => {
     if (!container.current) return;
     let findify = void 0;
+    let shouldRender = true;
     
     const init = async () => {
       findify = await waitForFindify();
+      if (!shouldRender) return;
+  
       if (history) findify.utils.history = history;
     
       const widgetConfig = getWidgetConfig(
@@ -89,7 +92,8 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
 
     return () => {
       console.log('detach', widgetKey)
-      findify.widgets.detach(widgetKey)
+      if (findify) findify.widgets.detach(widgetKey)
+      else shouldRender = false
     }
   }, [container]);
 
