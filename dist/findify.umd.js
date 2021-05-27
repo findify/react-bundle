@@ -1,2 +1,115 @@
-!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports,require("react")):"function"==typeof define&&define.amd?define(["exports","react"],t):t((e||self).reactBundle={},e.react)}(this,function(e,t){function n(){return(n=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var o in n)Object.prototype.hasOwnProperty.call(n,o)&&(e[o]=n[o])}return e}).apply(this,arguments)}var o={autocomplete:"change:suggestions",recommendation:"change:items",search:"change:items","smart-collection":"change:items"},i=function(){return new Promise(function(e){return(window.findifyCallbacks=window.findifyCallbacks||[]).push(function(t){return e(t)})})};e.default=function(e){var r=e.type,c=e.config,a=void 0===c?{}:c,s=e.options,u=void 0===s?{}:s,f=e.history,l=e.widgetKey,d=void 0===l?Math.random().toString(36).substring(7):l,g=t.useRef(null),m=t.useState(!1),h=m[0],p=m[1],y=t.useState(!1),w=y[0],v=y[1];return t.useEffect(function(){if(g.current){var e=void 0,t=!0;return function(){try{Promise.resolve(i()).then(function(i){if(e=i,t){f&&(e.utils.history=f);var c=function(e,t,n,o){return"recommendation"!==e?o:n.getIn(["features","recommendations","#"+(o.slot||t.getAttribute("id"))]).mergeDeep(o)}(r,g.current,e.config,n({widgetKey:d,disableAutoRequest:!0},a));e.widgets.attach(g.current,"smart-collection"===r?"search":r,c);var s=e.widgets.get(d),l=n({},s.config.get("meta")&&s.config.get("meta").toJS()||{},u);"recommendation"===r&&(l.slot=a.slot,l.type=a.type||c.get("type")),"smart-collection"===r&&(l.slot=a.slot||e.utils.collectionPath()),s.agent.defaults(l).on("error",function(){return v(!0)}).on(o[r],function e(t){return window.requestAnimationFrame(function(){s.agent.off(e),t.size||v(!0),p(!0)})}),["search","smart-collection"].includes(r)&&s.agent.applyState(e.utils.getQuery())}})}catch(e){return Promise.reject(e)}}(),function(){console.log("detach",d),e?e.widgets.detach(d):t=!1}}},[g]),[g,h,w]},e.waitForFindify=i});
-//# sourceMappingURL=findify.umd.js.map
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'react'], factory) :
+  (global = global || self, factory(global.findifyReactBundle = {}, global.react));
+}(this, (function (exports, react) { 'use strict';
+
+  const eventBindings = {
+    autocomplete: 'change:suggestions',
+    recommendation: 'change:items',
+    search: 'change:items',
+    'smart-collection': 'change:items',
+  };
+
+  const randomKey = () => Math.random().toString(36).substring(7);
+
+
+  const waitForFindify = () => new Promise(resolve =>
+    (window.findifyCallbacks = window.findifyCallbacks || []).push(findify => resolve(findify))
+  );
+
+  const getWidgetConfig = (type, node, config, customs) => {
+    if (type !== 'recommendation') return customs;
+    return config
+      .getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))])
+      .mergeDeep(customs);
+  };
+
+  var index = ({ type, config = {}, options = {}, history, widgetKey = randomKey() }) => {
+    const container = react.useRef(null);
+    const [ready, setReady] = react.useState(false);
+    const [hasError, setError] = react.useState(false);
+
+    react.useEffect(() => {
+      if (!container.current) return;
+      let findify = void 0;
+      let shouldRender = true;
+      
+      const init = async () => {
+        findify = await waitForFindify();
+        if (!shouldRender) return;
+    
+        if (history) findify.utils.history = history;
+      
+        const widgetConfig = getWidgetConfig(
+          type,
+          container.current,
+          findify.config,
+          {
+            widgetKey,
+            disableAutoRequest: true,
+            ...config,
+          }
+        );
+      
+        findify.widgets.attach(
+          container.current,
+          type === 'smart-collection' ? 'search' : type,
+          widgetConfig
+        );
+
+        const widget = findify.widgets.get(widgetKey);
+
+        const meta = widget.config.get('meta') && widget.config.get('meta').toJS() || {};
+    
+        const defaults = {
+          ...meta,
+          ...options
+        };
+
+        if (type === 'recommendation') {
+          defaults.slot = config.slot;
+          defaults.type = config.type || widgetConfig.get('type');
+        }
+
+        if (type === 'smart-collection') {
+          defaults.slot = config.slot || findify.utils.collectionPath();
+        }
+
+        const callback = (items) => window.requestAnimationFrame(() => {
+          widget.agent.off(callback);
+          if (!items.size) setError(true);
+          setReady(true);
+        });
+
+        widget.agent
+          .defaults(defaults)
+          .on('error', () => setError(true))
+          .on(eventBindings[type], callback);
+
+        if (['search', 'smart-collection'].includes(type)) {
+          widget.agent.applyState(findify.utils.getQuery());
+        }
+      };
+
+      init();
+
+      return () => {
+        console.log('detach', widgetKey);
+        if (findify) {
+          findify.widgets.detach(widgetKey);
+        } else {
+          shouldRender = false;
+        }
+      }
+    }, [container]);
+
+    return [container, ready, hasError];
+  };
+
+  exports.default = index;
+  exports.waitForFindify = waitForFindify;
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
+})));

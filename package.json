@@ -4,11 +4,13 @@
   "description": "React Hook that allows you to simply integrate Findify with React app",
   "source": "index.js",
   "main": "dist/findify.js",
-  "exports": "dist/findify.modern.js",
   "module": "dist/findify.module.js",
-  "unpkg": "dist/findify.umd.js",
+  "browser": "dist/findify.umd.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "microbundle",
+    "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -25,6 +27,8 @@
     "react": "^17.0.1"
   },
   "devDependencies": {
-    "microbundle": "^0.13.0"
+    "@rollup/plugin-commonjs": "^11.0.1",
+    "@rollup/plugin-node-resolve": "^7.0.0",
+    "rollup": "^1.29.0"
   }
 }
