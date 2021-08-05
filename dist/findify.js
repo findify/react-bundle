@@ -21,7 +21,7 @@ const waitForFindify = () => new Promise(resolve =>
 const getWidgetConfig = (type, node, config, customs) => {
   if (type !== 'recommendation') return customs;
   return config
-    .getIn(['features', 'recommendations', '#' + (customs.slot || node.getAttribute('id'))])
+    .getIn(['features', 'recommendations', customs.slot || node.getAttribute('id')])
     .mergeDeep(customs);
 };
 
