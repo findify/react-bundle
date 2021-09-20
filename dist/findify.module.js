@@ -35,8 +35,11 @@ var index = ({ type, config = {}, options = {}, history, widgetKey = randomKey()
       findify = await waitForFindify();
       if (!shouldRender) return;
   
-      if (history) findify.utils.history = history;
-    
+      if (history) {
+        findify.utils.setHistory
+          ? findify.utils.setHistory(history)
+          : findify.utils.history = history;
+      }    
       const widgetConfig = getWidgetConfig(
         type,
         container.current,
