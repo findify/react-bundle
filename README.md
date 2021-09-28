@@ -193,7 +193,7 @@ const CategoryPage = props => {
 ```
 For Smart Collections, Findify is introducing fallback measurements by rendering the default collections, in case if the current Smart Collection is not setup in Findify. This is to prevent blank collection pages.
 
-## Content Search
+## Content in the Search Results
 ```javascript
 //...
 import useFindify from '@findify/react-bundle';
@@ -218,8 +218,8 @@ const ContentPage = props => {
 };
   //...
 ```
-Instead of other widgets, content takes type of content from the node where it is rendered.
-You have to provide `data-type="CONTENT_INTEGRATION_NAME"` to the element where is will be rendered
+Unlike other widgets, content results widget get the type of content from the node where it is rendered.
+You must provide `data-type="CONTENT_SOURCE"` to the element where is will be rendered (you can get the CONTENT_SOURCE parameter from the Merchant Dashboard).
 
 ## Analytics
 To access Findify's analytics instance from anywhere in your app you can use the following example:
