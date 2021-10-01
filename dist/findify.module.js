@@ -101,7 +101,7 @@ var index = ({ type, config = {}, options = {}, history, widgetKey = randomKey()
         shouldRender = false;
       }
     }
-  }, [container]);
+  }, [container, config, history, options, type, widgetKey]);
 
   return [container, ready, hasError];
 };
