@@ -102,7 +102,7 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
         shouldRender = false
       }
     }
-  }, [container, config, history, options, type, widgetKey]);
+  }, [container]);
 
   return [container, ready, hasError];
 }
