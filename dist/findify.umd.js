@@ -105,7 +105,7 @@
           shouldRender = false;
         }
       }
-    }, [container, config, history, options, type, widgetKey]);
+    }, [container]);
 
     return [container, ready, hasError];
   };
