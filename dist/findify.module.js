@@ -60,9 +60,12 @@ var index = ({ type, config = {}, options = {}, history, widgetKey = randomKey()
       const widget = findify.widgets.get(widgetKey);
 
       const meta = widget.config.get('meta') && widget.config.get('meta').toJS() || {};
-  
+        
+      const defaultRequestParams = (widget.config.get('defaultRequestParams') && widget.config.get('defaultRequestParams').toJS()) || {};
+
       const defaults = {
         ...meta,
+        ...defaultRequestParams,
         ...options
       };
 
