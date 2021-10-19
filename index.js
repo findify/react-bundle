@@ -66,8 +66,8 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
 
       const defaults = {
         ...meta,
-        ...options,
-        ...defaultRequestParams
+        ...defaultRequestParams,
+        ...options
       }
 
       if (type === 'recommendation') {
