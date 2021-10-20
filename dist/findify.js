@@ -25,6 +25,8 @@ const getWidgetConfig = (type, node, config, customs) => {
     .mergeDeep(customs);
 };
 
+const cleanCollectionSlot = (slot) => slot.replace(/^\/|\/$/g, "").toLowerCase();
+
 var index = ({ type, config = {}, options = {}, history, widgetKey = randomKey() }) => {
   const container = react.useRef(null);
   const [ready, setReady] = react.useState(false);
@@ -79,7 +81,7 @@ var index = ({ type, config = {}, options = {}, history, widgetKey = randomKey()
       }
 
       if (type === 'smart-collection') {
-        defaults.slot = config.slot || findify.utils.collectionPath();
+        defaults.slot = cleanCollectionSlot(config.slot) || findify.utils.collectionPath();
       }
 
       const callback = (items) => window.requestAnimationFrame(() => {
