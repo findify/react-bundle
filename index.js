@@ -15,10 +15,17 @@ export const waitForFindify = () => new Promise(resolve =>
 );
 
 const getWidgetConfig = (type, node, config, customs) => {
-  if (type !== 'recommendation') return customs;
-  return config
-    .getIn(['features', 'recommendations', customs.slot || node.getAttribute('id')])
-    .mergeDeep(customs);
+  if (type !== 'recommendation') {
+    return customs;
+  }
+
+  let cfg = config.getIn(['features', 'recommendations', customs.slot || node.getAttribute('id')]);
+  
+  if (!confg) {
+    cfg = config.getIn(['features', 'recommendations', `#${customs.slot || node.getAttribute('id')}`]);
+  }
+
+  return cfg.mergeDeep(customs);
 };
 
 const cleanCollectionSlot = (slot) => slot.replace(/^\/|\/$/g, "").toLowerCase();
