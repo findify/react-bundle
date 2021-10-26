@@ -25,7 +25,7 @@
 
     let cfg = config.getIn(['features', 'recommendations', customs.slot || node.getAttribute('id')]);
     
-    if (!confg) {
+    if (!cfg) {
       cfg = config.getIn(['features', 'recommendations', `#${customs.slot || node.getAttribute('id')}`]);
     }
 

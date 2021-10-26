@@ -1,6 +1,6 @@
 {
   "name": "@findify/react-bundle",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "React Hook that allows you to simply integrate Findify with React app",
   "source": "index.js",
   "main": "dist/findify.js",
