@@ -85,7 +85,7 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
       }
 
       if (type === 'smart-collection') {
-        defaults.slot = cleanCollectionSlot(config.slot) || findify.utils.collectionPath();
+        defaults.slot = config.slot && config.slot !== '' ? cleanCollectionSlot(config.slot) : findify.utils.collectionPath();
       }
 
       const callback = (items) => window.requestAnimationFrame(() => {
