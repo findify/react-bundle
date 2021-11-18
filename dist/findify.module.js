@@ -15,11 +15,20 @@ const waitForFindify = () => new Promise(resolve =>
 );
 
 const getWidgetConfig = (type, node, config, customs) => {
-  if (type !== 'recommendation') return customs;
-  return config
-    .getIn(['features', 'recommendations', customs.slot || node.getAttribute('id')])
-    .mergeDeep(customs);
+  if (type !== 'recommendation') {
+    return customs;
+  }
+
+  let cfg = config.getIn(['features', 'recommendations', customs.slot || node.getAttribute('id')]);
+  
+  if (!cfg) {
+    cfg = config.getIn(['features', 'recommendations', `#${customs.slot || node.getAttribute('id')}`]);
+  }
+
+  return cfg.mergeDeep(customs);
 };
+
+const cleanCollectionSlot = (slot) => slot.replace(/^\/|\/$/g, "").toLowerCase();
 
 var index = ({ type, config = {}, options = {}, history, widgetKey = randomKey() }) => {
   const container = useRef(null);
@@ -60,9 +69,12 @@ var index = ({ type, config = {}, options = {}, history, widgetKey = randomKey()
       const widget = findify.widgets.get(widgetKey);
 
       const meta = widget.config.get('meta') && widget.config.get('meta').toJS() || {};
-  
+        
+      const defaultRequestParams = (widget.config.get('defaultRequestParams') && widget.config.get('defaultRequestParams').toJS()) || {};
+
       const defaults = {
         ...meta,
+        ...defaultRequestParams,
         ...options
       };
 
@@ -72,7 +84,7 @@ var index = ({ type, config = {}, options = {}, history, widgetKey = randomKey()
       }
 
       if (type === 'smart-collection') {
-        defaults.slot = config.slot || findify.utils.collectionPath();
+        defaults.slot = config.slot && config.slot !== '' ? cleanCollectionSlot(config.slot) : findify.utils.collectionPath();
       }
 
       const callback = (items) => window.requestAnimationFrame(() => {
