@@ -96,7 +96,7 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
 
     return () => {
       console.log('detach', widgetKey)
-      if (findify) {
+      if (findify && findify.widgets.get(widgetKey)) {
         findify.widgets.detach(widgetKey)
       } else {
         shouldRender = false
