@@ -42,6 +42,16 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
     
     const init = async () => {
       findify = await waitForFindify();
+
+      let collectionSlot;
+      if (type === 'smart-collection') {
+        collectionSlot = config.slot && config.slot !== '' ? cleanCollectionSlot(config.slot) : findify.utils.collectionPath();
+        if (!findify.utils.isCollection(findify.config.get('collections'), collectionSlot)) {
+          shouldRender = false;
+          setError(true);
+        }
+      }
+
       if (!shouldRender) return;
   
       if (history) {
@@ -84,8 +94,8 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
         defaults.type = config.type || widgetConfig.get('type');
       }
 
-      if (type === 'smart-collection') {
-        defaults.slot = config.slot && config.slot !== '' ? cleanCollectionSlot(config.slot) : findify.utils.collectionPath();
+      if (collectionSlot) {
+        defaults.slot = collectionSlot;
       }
 
       const callback = (items) => window.requestAnimationFrame(() => {
