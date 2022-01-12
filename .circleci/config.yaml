@@ -1,0 +1,63 @@
+version: 2.1
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: findify/circleci-node-container:14
+
+jobs:
+  build_and_test:
+    <<: *defaults
+
+    steps:
+      - checkout
+
+      - run:
+          name: Download npmrc
+          command: aws s3 cp s3://findify-prod/authentication/npm/npmrc .npmrc
+      
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: yarn
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run: yarn build
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - '*'
+
+  publish:
+    <<: *defaults
+    
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: publish to npm
+          command: npm publish --access public
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build_and_test:
+          context: backend
+      - publish:
+          requires:
+            - build_and_test
+          filters:
+            branches:
+              only:
+                - main
