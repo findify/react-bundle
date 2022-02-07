@@ -233,7 +233,7 @@ async () => {
 ``` 
 
 ### Update cart event
-Should be sent after product has been added to the cart and contain the whole cat content
+Should be sent on all pages along with `view-page` event and it should have items that are currently added to the cart. If there are no products in the cart, just send an empty `line_items` array. The event must also be fired after a product has been added to the cart.
 ```javascript
  const { analytics } = await waitForFindify();
  analytics.sendEvent('update-cart', {
