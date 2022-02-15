@@ -121,7 +121,7 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
     init();
 
     return () => {
-      console.log(  , widgetKey)
+      console.log('detach', widgetKey)
       if (findify && findify.widgets.get(widgetKey)) {
         findify.widgets.detach(widgetKey)
       } else {
