@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 const eventBindings = {
   autocomplete: 'change:suggestions',
@@ -31,12 +31,16 @@ const getWidgetConfig = (type, node, config, customs) => {
 const cleanCollectionSlot = (slot) => slot.replace(/^\/|\/$/g, "").toLowerCase();
 
 export default ({ type, config = {}, options = {}, history, widgetKey = randomKey() }) => {
-  const container = useRef(null);
+  const [container, setContainer] = useState(null);
   const [ready, setReady] = useState(false);
   const [hasError, setError] = useState(false);
 
+  const onSetContainer = useCallback((node) => {
+    setContainer(node);
+  }, [container])
+
   useEffect(() => {
-    if (!container.current) return;
+    if (!container) return;
     let findify = void 0;
     let shouldRender = true;
     
@@ -62,7 +66,7 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
     
       const widgetConfig = getWidgetConfig(
         type,
-        container.current,
+        container,
         findify.config,
         {
           widgetKey,
@@ -72,7 +76,7 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
       );
     
       findify.widgets.attach(
-        container.current,
+        container,
         type === 'smart-collection' ? 'search' : type,
         widgetConfig
       )
@@ -126,5 +130,5 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
     }
   }, [container]);
 
-  return [container, ready, hasError];
+  return [onSetContainer, ready, hasError];
 }
