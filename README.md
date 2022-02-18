@@ -25,7 +25,7 @@ import React from 'react'
 import useFindify from '@findify/react-bundle'
 ​
 export default () => {
-  const [container, isReady, hasError] = useFindify({ type: 'search' })
+  const [container, isReady, hasError, error = useFindify({ type: 'search' })
   return (
     <div ref={container} />
   )
@@ -37,6 +37,8 @@ The first element of an array is a `React.createRef()` that you should add as `r
 The second element is a widget ready state: `true` or `false`. You can use this state to show and hide placeholders while findify is still rendering.
 ​
 The third element of an array is an error state: `true` or `false`. It will return `true` if there are errors or if there are no items returned in response.
+
+The fourth element of an array is an string representation of the error
 ​
 ### Props
 ​
@@ -148,7 +150,7 @@ import useFindify from '@findify/react-bundle';
 ​
 //...
 const StartPage = ({ location: { pathname, key }, startPageId }) => {
-  const [container, isReady, hasError] = useFindify({
+  const [container, isReady, hasError, error] = useFindify({
     type: 'recommendation',
     config: {
       slot: 'home-findify-rec-2', // Slot is required for recommendation widgets
@@ -173,7 +175,7 @@ import useFindify from '@findify/react-bundle';
 ​
 const CategoryPage = props => {
   // ...
-  const [container, isReady, hasError] = useFindify({ type: 'smart-collection' });
+  const [container, isReady, hasError, error] = useFindify({ type: 'smart-collection' });
 ​
   if (!hasError) {
     return (
@@ -202,7 +204,7 @@ import useFindify from '@findify/react-bundle';
 ​
 const ContentPage = props => {
   // ...
-  const [container, isReady, hasError] = useFindify({ type: 'content' });
+  const [container, isReady, hasError, error] = useFindify({ type: 'content' });
 ​
   if (!hasError) {
     return (

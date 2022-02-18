@@ -33,7 +33,7 @@ const cleanCollectionSlot = (slot) => slot.replace(/^\/|\/$/g, "").toLowerCase()
 export default ({ type, config = {}, options = {}, history, widgetKey = randomKey() }) => {
   const [container, setContainer] = useState(null);
   const [ready, setReady] = useState(false);
-  const [hasError, setError] = useState(false);
+  const [error, setError] = useState(null);
 
   const onSetContainer = useCallback((node) => {
     setContainer(node);
@@ -52,7 +52,7 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
         collectionSlot = config.slot && config.slot !== '' ? cleanCollectionSlot(config.slot) : findify.utils.collectionPath();
         if (!findify.utils.isCollection(findify.config.get('collections'), collectionSlot)) {
           shouldRender = false;
-          setError(true);
+          setError(`collection slot: ${collectionSlot} not configured in Findify`);
         }
       }
 
@@ -104,13 +104,13 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
 
       const callback = (items) => window.requestAnimationFrame(() => {
         widget.agent.off(callback)
-        if (!items.size) setError(true)
+        if (!items.size) setError('Findify Search API returns 0 items')
         setReady(true);
       })
 
       widget.agent
         .defaults(defaults)
-        .on('error', () => setError(true))
+        .on('error', () => setError('Findify Search API throws an error'))
         .on(eventBindings[type], callback)
 
       if (['search', 'smart-collection'].includes(type)) {
@@ -130,5 +130,5 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
     }
   }, [container]);
 
-  return [onSetContainer, ready, hasError];
+  return [onSetContainer, ready, !!error, error];
 }
