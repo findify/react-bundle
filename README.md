@@ -73,7 +73,7 @@ Go to `/components/SearchPage/SearchPage.js`
 ```javascript
 //...
 import useFindify from '@findify/react-bundle';
-import { useHistory } from 'react-router;
+import { useHistory } from 'react-router';
 ​
 export const Container = styled(MaxWidth)`
   padding: 0 0.75rem;
@@ -103,7 +103,7 @@ Go to `/components/Layout/Header/SearchBar.js`
 ```javascript
 //...
 import useFindify from '@findify/react-bundle';
-import { useHistory } from 'react-router;
+import { useHistory } from 'react-router';
 ​
 ​
 //...
