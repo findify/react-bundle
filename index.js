@@ -43,21 +43,23 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
     if (!container) return;
     let findify = void 0;
     let shouldRender = true;
+
+    setError(null)
     
     const init = async () => {
       findify = await waitForFindify();
+      
+      if (!shouldRender) return;
 
       let collectionSlot;
       if (type === 'smart-collection') {
         collectionSlot = config.slot && config.slot !== '' ? cleanCollectionSlot(config.slot) : findify.utils.collectionPath();
         if (!findify.utils.isCollection(findify.config.get('collections'), collectionSlot)) {
-          shouldRender = false;
           setError(`collection slot: ${collectionSlot} not configured in Findify`);
+          return
         }
       }
 
-      if (!shouldRender) return;
-  
       if (history) {
         findify.utils.setHistory
           ? findify.utils.setHistory(history)
@@ -128,7 +130,7 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
         shouldRender = false
       }
     }
-  }, [container]);
+  }, [container, config, type]);
 
   return [onSetContainer, ready, !!error, error];
 }
