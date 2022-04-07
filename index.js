@@ -45,6 +45,7 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
     let shouldRender = true;
 
     setError(null)
+    setReady(false)
     
     const init = async () => {
       findify = await waitForFindify();
@@ -130,7 +131,7 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
         shouldRender = false
       }
     }
-  }, [container, config, type]);
+  }, [container, config.slot, type]);
 
   return [onSetContainer, ready, !!error, error];
 }
