@@ -40,18 +40,13 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
   }, [container])
 
   useEffect(() => {
-    if (!container) return;
     let findify = void 0;
-    let shouldRender = true;
 
-    setError(null)
     setReady(false)
     
     const init = async () => {
       findify = await waitForFindify();
       
-      if (!shouldRender) return;
-
       let collectionSlot;
       if (type === 'smart-collection') {
         collectionSlot = config.slot && config.slot !== '' ? cleanCollectionSlot(config.slot) : findify.utils.collectionPath();
@@ -59,6 +54,12 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
           setError(`collection slot: ${collectionSlot} not configured in Findify`);
           return
         }
+      }
+
+      setError(null);
+
+      if (!container) {
+        return
       }
 
       if (history) {
@@ -127,8 +128,6 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
       console.log('detach', widgetKey)
       if (findify && findify.widgets.get(widgetKey)) {
         findify.widgets.detach(widgetKey)
-      } else {
-        shouldRender = false
       }
     }
   }, [container, config.slot, type]);
