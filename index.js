@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
 const eventBindings = {
   autocomplete: 'change:suggestions',
@@ -35,6 +35,11 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(null);
 
+  const prevProps = useRef({
+    type,
+    slot: config.slot
+  });
+
   const onSetContainer = useCallback((node) => {
     setContainer(node);
   }, [container])
@@ -56,7 +61,9 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
         }
       }
 
-      setError(null);
+      if (config.slot !== prevProps.current.slot || type !== prevProps.current.type) {
+        setError(null)
+      }
 
       if (!container) {
         return
@@ -108,7 +115,10 @@ export default ({ type, config = {}, options = {}, history, widgetKey = randomKe
 
       const callback = (items) => window.requestAnimationFrame(() => {
         widget.agent.off(callback)
-        if (!items.size) setError('Findify Search API returns 0 items')
+        if (!items.size) {
+          setError('Findify Search API returns 0 items')
+          return
+        }
         setReady(true);
       })
 
