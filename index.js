@@ -5,6 +5,7 @@ const eventBindings = {
   recommendation: 'change:items',
   search: 'change:items',
   'smart-collection': 'change:items',
+  content: 'change:items',
 }
 
 const randomKey = () => Math.random().toString(36).substring(7)
