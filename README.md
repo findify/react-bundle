@@ -84,7 +84,13 @@ const SearchPage = routeProps => {
   const track = useTracker();
   const history = useHistory();
   const { pathname, search } = routeProps.location;
-  const [container, isReady, hasError, error] = useFindify({ type: 'search', history });
+  const [container, isReady, hasError, error] = useFindify({ 
+    type: 'search', 
+    history,
+    config: {
+      ... //you can pass extra properties to the widget
+    }
+  });
 ​
   useEffect(() => {
     track(trackPageEvent({ pathname: `${pathname}${search}` }));
@@ -125,7 +131,13 @@ const StyledSearchField = styled('div')`
 ​
 const SearchBar = ({ searchOpen, setSearchOpen }) => {
   const history = useHistory();
-  const [container] = useFindify({ type: 'autocomplete', history });
+  const [container] = useFindify({ 
+    type: 'autocomplete', 
+    history,
+    config: {
+      ... //you can pass extra properties to the widget
+    }
+  });
   return (
     <PoseGroup flipMove={true}>
       {searchOpen && (
@@ -153,8 +165,20 @@ const StartPage = ({ location: { pathname, key }, startPageId }) => {
   const [container, isReady, hasError, error] = useFindify({
     type: 'recommendation',
     config: {
-      slot: 'home-findify-rec-2', // Slot is required for recommendation widgets
-    }
+      slot: 'home-findify-rec-2', // Slot is required for recommendation widgets,
+      ... //you can pass extra properties to the widget
+    },
+    options: {
+       rules: [{
+         'action': 'exclude',
+         'type': 'text',
+         'name': 'id',
+         'values': [{
+           value: ['item_id_1', 'item_id_2', ...] //can be used for Recommendation type: Frequently Purchased/Viewed Together on PDP or Cart pages
+         }]
+       }],
+       item_ids: ['item_id_1', 'item_id_2', ...] //required for Recommendation type: Frequently Purchased/Viewed Together on PDP or Cart pages
+    },
   });
   return (
     <Fragment>
@@ -175,7 +199,13 @@ import useFindify from '@findify/react-bundle';
 ​
 const CategoryPage = props => {
   // ...
-  const [container, isReady, hasError, error] = useFindify({ type: 'smart-collection' });
+  const [container, isReady, hasError, error] = useFindify({ 
+    type: 'smart-collection',
+    config: {
+      slot: 'some_collection_slot' //optional: you can override the smart-collections slot with custom one
+      ... //you can pass extra properties to the widget
+    }
+  });
 ​
   if (!hasError) {
     return (
@@ -204,7 +234,12 @@ import useFindify from '@findify/react-bundle';
 ​
 const ContentPage = props => {
   // ...
-  const [container, isReady, hasError, error] = useFindify({ type: 'content' });
+  const [container, isReady, hasError, error] = useFindify({ 
+    type: 'content',
+    config: {
+      ... //you can pass extra properties to the widget
+    }
+  });
 ​
   if (!hasError) {
     return (
@@ -235,7 +270,7 @@ async () => {
 ``` 
 
 ### Update cart event
-Should be sent after product has been added to the cart and contain the whole cat content
+Should be sent on all pages along with `view-page` event and it should have items that are currently added to the cart. If there are no products in the cart, just send an empty `line_items` array. The event must also be fired after a product has been added to the cart.
 ```javascript
  const { analytics } = await waitForFindify();
  analytics.sendEvent('update-cart', {
@@ -278,7 +313,7 @@ Should be sent every time user lands on the product page
  })
 ```
 ### Product click event
-In case you are using your own History instance, you should update `components/Cards/Product/view.tsx` and change `onClick` event for the product card (this is done via DevTools Extension as a customization to our platfom):
+In case you are using your own History instance, you should update `components/Cards/Product/view.tsx` and change `onClick` event for the product card (this is done via DevTools Extension as a customization to our platform):
 ```javascript
 const ProductCardView ({ item }) => {
   const onClick = useCallback((e) => {
