@@ -25,7 +25,7 @@ import React from 'react'
 import useFindify from '@findify/react-bundle'
 ​
 export default () => {
-  const [container, isReady, hasError, error = useFindify({ type: 'search' })
+  const [container, isReady, hasError, error] = useFindify({ type: 'search' })
   return (
     <div ref={container} />
   )
@@ -84,7 +84,7 @@ const SearchPage = routeProps => {
   const track = useTracker();
   const history = useHistory();
   const { pathname, search } = routeProps.location;
-  const [container, isReady] = useFindify({ type: 'search', history });
+  const [container, isReady, hasError, error] = useFindify({ type: 'search', history });
 ​
   useEffect(() => {
     track(trackPageEvent({ pathname: `${pathname}${search}` }));
@@ -273,7 +273,8 @@ Should be sent every time user lands on the product page
  const { analytics } = await waitForFindify();
  analytics.sendEvent('view-page', {
   item_id: "PRODUCT_ID",
-  variant_item_id: "PRODUCT_VARIANT_ID"
+  variant_item_id: "PRODUCT_VARIANT_ID",
+  force: true
  })
 ```
 ### Product click event
