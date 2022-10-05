@@ -303,12 +303,12 @@ Should be sent when user purchases products
  });
 ```
 ### View page event
-Should be sent every time user lands on the product page
+Should be fired on every redirect. If the user landed on the Product Page, you need to pass extra parameters: `item_id` and `variant_item_id`:
 ```javascript
  const { analytics } = await waitForFindify();
  analytics.sendEvent('view-page', {
-  item_id: "PRODUCT_ID",
-  variant_item_id: "PRODUCT_VARIANT_ID",
+  item_id: "PRODUCT_ID", //required, if the user is on the Product Page
+  variant_item_id: "PRODUCT_VARIANT_ID", //required, if the user is on the Product Page
   force: true
  })
 ```
